@@ -19,9 +19,11 @@
  *
 */
 
-var CompassHeading = function(magneticHeading, trueHeading, headingAccuracy, timestamp) {
+var CompassHeading = function(magneticHeading, trueHeading, headingAccuracy, timestamp, pitch, role) {
   this.magneticHeading = magneticHeading;
   this.trueHeading = trueHeading;
+  this.pitch = pitch || 0;
+  this.role = role || 0;
   this.headingAccuracy = headingAccuracy;
   this.timestamp = timestamp || new Date().getTime();
 };
