@@ -52,6 +52,8 @@ public class CompassListener extends CordovaPlugin implements SensorEventListene
 
     int status;                         // status of listener
     float heading;                      // most recent heading value
+    float pitch;                        // most recent pitch value
+    float roll;                         // most recent roll value
     long timeStamp;                     // time of most recent value
     long lastAccessTime;                // time the value was last retrieved
     int accuracy;                       // accuracy of the sensor
@@ -66,6 +68,8 @@ public class CompassListener extends CordovaPlugin implements SensorEventListene
      */
     public CompassListener() {
         this.heading = 0;
+        this.pitch = 0;
+        this.roll = 0;
         this.timeStamp = 0;
         this.setStatus(CompassListener.STOPPED);
     }
@@ -217,11 +221,16 @@ public class CompassListener extends CordovaPlugin implements SensorEventListene
     public void onSensorChanged(SensorEvent event) {
 
         // We only care about the orientation as far as it refers to Magnetic North
+        // p.s.: Not only! WE CARE ABOUT IT ALL!
         float heading = event.values[0];
+        float pitch = event.values[1];
+        float roll = event.values[2];
 
         // Save heading
         this.timeStamp = System.currentTimeMillis();
         this.heading = heading;
+        this.pitch = pitch;
+        this.roll = roll;
         this.setStatus(CompassListener.RUNNING);
 
         // If heading hasn't been read for TIMEOUT time, then turn off compass sensor to save power
@@ -247,6 +256,14 @@ public class CompassListener extends CordovaPlugin implements SensorEventListene
     public float getHeading() {
         this.lastAccessTime = System.currentTimeMillis();
         return this.heading;
+    }
+
+    public float getPitch() {
+        return this.pitch;
+    }
+
+    public float getRoll() {
+        return this.roll;
     }
 
     /**
@@ -285,6 +302,8 @@ public class CompassListener extends CordovaPlugin implements SensorEventListene
 
         obj.put("magneticHeading", this.getHeading());
         obj.put("trueHeading", this.getHeading());
+        obj.put("pitch", this.getPitch());
+        obj.put("roll", this.getRoll());
         // Since the magnetic and true heading are always the same our and accuracy
         // is defined as the difference between true and magnetic always return zero
         obj.put("headingAccuracy", 0);
